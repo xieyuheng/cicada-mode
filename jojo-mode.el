@@ -155,17 +155,19 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
                word-end))
       (1 font-lock-constant-face))
 
-    ;; ','
     (,(rx (group ","))
       (1 font-lock-keyword-face))
 
-    ;; '#'
     (,(rx symbol-start
           (group "#")
           symbol-end)
       (1 font-lock-constant-face))
 
-    ;; '%'
+    (,(rx symbol-start
+          (group "λ")
+          symbol-end)
+      (1 font-lock-constant-face))
+
     (,(rx symbol-start
           (group "%")
           symbol-end)
@@ -258,7 +260,17 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
       0 font-lock-constant-face)
 
     ;; CONST SOME_CONST (optionally prefixed by /)
-    ("\\(?:\\<\\|/\\)\\([A-Z]+\\|\\([A-Z]+_[A-Z1-9_]+\\)\\)\\>" 1 font-lock-constant-face))
+    ("\\(?:\\<\\|/\\)\\([A-Z]+\\|\\([A-Z]+_[A-Z1-9_]+\\)\\)\\>" 1 font-lock-constant-face)
+
+    (,(rx (minimal-match
+           (seq word-start
+                (group "\""
+                       (one-or-more (not (in 34)))
+                       "\"")
+                word-end)))
+      (1 font-lock-string-face))
+
+    )
 
   "Default expressions to highlight in jojo mode.")
 
@@ -273,165 +285,13 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           nil
           (font-lock-mark-block-function . mark-defun))))
 
-;;; Vertical alignment
-(defcustom jojo-align-forms-automatically nil
-  "If non-nil, vertically align some forms automatically.
-Automatically means it is done as part of indenting code.  This
-applies to binding forms (`jojo-align-binding-forms'), to cond
-forms (`jojo-align-cond-forms') and to map literals.  For
-instance, selecting a map a hitting \\<jojo-mode-map>`\\[indent-for-tab-command]'
-will align the values like this:
-    {:some-key 10
-     :key2     20}"
-  :package-version '(jojo-mode . "5.1")
-  :safe #'booleanp
-  :type 'boolean)
-
-(defcustom jojo-align-binding-forms
-  '("let" "when-let" "when-some" "if-let" "if-some" "binding" "loop"
-    "doseq" "for" "with-open" "with-local-vars" "with-redefs")
-  "List of strings matching forms that have binding forms."
-  :package-version '(jojo-mode . "5.1")
-  :safe #'listp
-  :type '(repeat string))
-
-(defcustom jojo-align-cond-forms '("condp" "cond" "cond->" "cond->>" "case" "are")
-  "List of strings identifying cond-like forms."
-  :package-version '(jojo-mode . "5.1")
-  :safe #'listp
-  :type '(repeat string))
-
-(defun jojo--position-for-alignment ()
-  "Non-nil if the sexp around point should be automatically aligned.
-This function expects to be called immediately after an
-open-brace or after the function symbol in a function call.
-
-First check if the sexp around point is a map literal, or is a
-call to one of the vars listed in `jojo-align-cond-forms'.  If
-it isn't, return nil.  If it is, return non-nil and place point
-immediately before the forms that should be aligned.
-
-For instance, in a map literal point is left immediately before
-the first key; while, in a let-binding, point is left inside the
-binding vector and immediately before the first binding
-construct."
-  ;; Are we in a map?
-  (or (and (eq (char-before) ?{))
-      ;; Are we in a cond form?
-      (let* ((fun    (car (member (thing-at-point 'symbol) jojo-align-cond-forms)))
-             (method (and fun (jojo--get-indent-method fun)))
-             ;; The number of special arguments in the cond form is
-             ;; the number of sexps we skip before aligning.
-             (skip   (cond ((numberp method) method)
-                           ((null method) 0)
-                           ((sequencep method) (elt method 0)))))
-        (when (and fun (numberp skip))
-          (jojo-forward-logical-sexp skip)
-          (comment-forward (point-max))
-          fun)) ; Return non-nil (the var name).
-      ;; Are we in a let-like form?
-      (when (member (thing-at-point 'symbol)
-                    jojo-align-binding-forms)
-        ;; Position inside the binding vector.
-        (jojo-forward-logical-sexp)
-        (backward-sexp)
-        (when (eq (char-after) ?\[)
-          (forward-char 1)
-          (comment-forward (point-max))
-          ;; Return non-nil.
-          t))))
-
-(defun jojo--find-sexp-to-align (end)
-  "Non-nil if there's a sexp ahead to be aligned before END.
-Place point as in `jojo--position-for-alignment'."
-  ;; Look for a relevant sexp.
-  (let ((found))
-    (while (and (not found)
-                (search-forward-regexp
-                 (concat "{\\|(" (regexp-opt
-                                  (append jojo-align-binding-forms
-                                          jojo-align-cond-forms)
-                                  'symbols))
-                 end 'noerror))
-
-      (let ((ppss (syntax-ppss)))
-        ;; If we're in a string or comment.
-        (unless (or (elt ppss 3)
-                    (elt ppss 4))
-          ;; Only stop looking if we successfully position
-          ;; the point.
-          (setq found (jojo--position-for-alignment)))))
-    found))
-
-(defun jojo--search-whitespace-after-next-sexp (&optional bound _noerror)
-  "Move point after all whitespace after the next sexp.
-
-Set the match data group 1 to be this region of whitespace and
-return point.
-
-BOUND is bounds the whitespace search."
-  (unwind-protect
-       (ignore-errors
-         (jojo-forward-logical-sexp 1)
-         (search-forward-regexp "\\([,\s\t]*\\)" bound)
-         (pcase (syntax-after (point))
-           ;; End-of-line, try again on next line.
-           (`(12) (jojo--search-whitespace-after-next-sexp bound))
-           ;; Closing paren, stop here.
-           (`(5 . ,_) nil)
-           ;; Anything else is something to align.
-           (_ (point))))
-    (when (and bound (> (point) bound))
-      (goto-char bound))))
-
-(defun jojo-align (beg end)
-  "Vertically align the contents of the sexp around point.
-If region is active, align it.  Otherwise, align everything in the
-current \"top-level\" sexp.
-When called from lisp code align everything between BEG and END."
-  (interactive (if (use-region-p)
-                   (list (region-beginning) (region-end))
-                 (save-excursion
-                   (let ((end (progn (end-of-defun)
-                                     (point))))
-                     (jojo-backward-logical-sexp)
-                     (list (point) end)))))
-  (setq end (copy-marker end))
-  (save-excursion
-    (goto-char beg)
-    (while (jojo--find-sexp-to-align end)
-      (let ((sexp-end (save-excursion
-                        (backward-up-list)
-                        (forward-sexp 1)
-                        (point-marker)))
-            (jojo-align-forms-automatically nil)
-            (count 1))
-        ;; For some bizarre reason, we need to `align-region' once for each
-        ;; group.
-        (save-excursion
-          (while (search-forward-regexp "^ *\n" sexp-end 'noerror)
-            (cl-incf count)))
-        (dotimes (_ count)
-          (align-region (point) sexp-end nil
-                        '((jojo-align (regexp . jojo--search-whitespace-after-next-sexp)
-                           (group . 1)
-                           (separate . "^ *$")
-                           (repeat . t)))
-                        nil))
-        ;; Reindent after aligning because of #360.
-        (indent-region (point) sexp-end)))))
-
 ;;; Indentation
 (defun jojo-indent-region (beg end)
   "Like `indent-region', but also maybe align forms.
 Forms between BEG and END are aligned according to
 `jojo-align-forms-automatically'."
   (prog1 (let ((indent-region-function nil))
-           (indent-region beg end))
-    (when jojo-align-forms-automatically
-      (condition-case nil
-          (jojo-align beg end)
-        (scan-error nil)))))
+           (indent-region beg end))))
 
 (defun jojo-indent-line ()
   "Indent current line as jojo code."
@@ -662,6 +522,8 @@ This function also returns nil meaning don't specify the indentation."
 (defun put-jojo-indent (sym indent)
   "Instruct `jojo-indent-function' to indent the body of SYM by INDENT."
   (put sym 'jojo-indent-function indent))
+
+(put (intern "λ") 'lisp-indent-function 0)
 
 (defmacro define-jojo-indent (&rest kvs)
   "Call `put-jojo-indent' on a series, KVS."
