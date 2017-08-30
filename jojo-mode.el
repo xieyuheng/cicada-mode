@@ -105,6 +105,7 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
  (      127       "-"  )
  (   ?\,        "_p"  )
  (   ?\-        "_p"  )
+ (   ?\\        "_p"  )
  ;; symbol constituent:
  ;; the following functions need this:
  ;; ``forward-word'' and so on ...
@@ -230,21 +231,22 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
                      "refl"
                      "times"
                      "end"
+                     "recur"
                      "true"
                      "false"
                      "then"
                      "else"
                      "debug"
-                     "step"))
+                     "step"
+                     "quote"))
           word-end)
       (1 font-lock-type-face))
 
     ;; (keyword ...)
     (,(rx "("
           (group (or "=" "*" ":"
-                     "do" "el" "if" "loop"
-                     "recur" "throw" "try" "catch" "finally"
-                     "set!" "new" "." "quote"))
+                     "do" "el" "if" "throw" "try" "catch" "finally"
+                     "set!" "new" "."))
           word-end)
       (1 font-lock-keyword-face))
 
@@ -568,14 +570,11 @@ work).  To set it from Lisp code, use
     (fn :defn)
   (def :defn)
   (defn :defn)
-  (bound-fn :defn)
-  (if 1)
+  (begin :defn)
+  (if 0)
   (if-not 1)
-  (case 1)
+  (case :defn)
   (cond 0)
-  (condp 2)
-  (cond-> 1)
-  (cond->> 1)
   (when 1)
   (while 1)
   (when-not 1)
@@ -607,7 +606,6 @@ work).  To set it from Lisp code, use
   (let 1)
   (letfn '(1 ((:defn)) nil))
   (binding 1)
-  (loop 1)
   (for 1)
   (doseq 1)
   (dotimes 1)
@@ -628,8 +626,15 @@ work).  To set it from Lisp code, use
   (+data :defn)
   (+var :defn)
   (note :defn)
+  (test :defn)
+  (assert :defn)
+  (assert! :defn)
+
+  (+gene :defn)
+  (+disp :defn)
 
   (forget :defn)
+  (let-bind :defn)
 
   (type-sum :defn) (type-case :defn))
 
