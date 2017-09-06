@@ -105,7 +105,13 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
  (      127       "-"  )
  (   ?\,        "_p"  )
  (   ?\-        "_p"  )
- (   ?\\        "_p"  )
+ (   ?\_        "_p"  )
+ (   ?\/        "_p"  )
+
+ (   ?\"        "\"   ")
+ (   ?'         "'   ")
+ (   ?`         "'   ")
+
  ;; symbol constituent:
  ;; the following functions need this:
  ;; ``forward-word'' and so on ...
@@ -165,6 +171,11 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
       (1 font-lock-constant-face))
 
     (,(rx symbol-start
+          (group "@")
+          symbol-end)
+      (1 font-lock-constant-face))
+
+    (,(rx symbol-start
           (group "λ")
           symbol-end)
       (1 font-lock-constant-face))
@@ -181,12 +192,12 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
       (1 font-lock-type-face))
 
     ;; @:fun
-    (,(rx symbol-start
-          (group "@")
-          (group ":" (one-or-more (not blank)))
-          word-end)
-      (1 font-lock-constant-face)
-      (2 font-lock-preprocessor-face))
+    ;; (,(rx symbol-start
+    ;;       (group "@")
+    ;;       (group ":" (one-or-more (not blank)))
+    ;;       word-end)
+    ;;   (1 font-lock-constant-face)
+    ;;   (2 font-lock-preprocessor-face))
 
     ;; name!
     (,(rx symbol-start
@@ -194,22 +205,22 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-variable-name-face))
 
-    ;; local-name.field-name
-    ;; local-name.field-name.field-name
+    ;; module-name:name
     (,(rx symbol-start
-          (group (one-or-more (not (in ". \t"))))
-          (group "." (one-or-more (not blank)))
+          (group (one-or-more (not (in ": \t")))
+                 ":")
+          (group (one-or-more (not blank)))
           word-end)
-      (2 font-lock-constant-face))
+      (1 font-lock-type-face))
 
-    ;; :local-name.field-name
-    ;; :local-name.field-name.field-name
-    (,(rx symbol-start
-          (group ":" (one-or-more (not (in ". \t"))))
-          (group "." (one-or-more (not blank)))
-          word-end)
-      (1 font-lock-preprocessor-face)
-      (2 font-lock-constant-face))
+;;     ;; :local-name.field-name
+;;     ;; :local-name.field-name.field-name
+;;     (,(rx symbol-start
+;;           (group ":" (one-or-more (not (in ". \t"))))
+;;           (group "." (one-or-more (not blank)))
+;;           word-end)
+;;       (1 font-lock-preprocessor-face)
+;;       (2 font-lock-constant-face))
 
     ;; :local-name
     (,(rx symbol-start
@@ -228,9 +239,11 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           (group (or "--"
                      "->"
                      "rev"
+                     "default"
                      "refl"
                      "times"
                      "end"
+                     "bye"
                      "recur"
                      "true"
                      "false"
@@ -622,6 +635,7 @@ work).  To set it from Lisp code, use
   (+imp :defn) (imp :defn)
   (+proof :defn) (proof :defn)
   (run :defn)
+  (list :defn)
   (+def :defn)
   (+data :defn)
   (+var :defn)
@@ -630,13 +644,26 @@ work).  To set it from Lisp code, use
   (assert :defn)
   (assert! :defn)
 
+  (array :defn)
+  (vector :defn)
+
   (+gene :defn)
   (+disp :defn)
+  (+disp-default :defn)
 
   (forget :defn)
   (let-bind :defn)
 
-  (type-sum :defn) (type-case :defn))
+  (type-sum :defn)
+  (type-case :defn)
+
+  (+module :defn)
+  (import :defn)
+  (export :defn)
+  (use :defn)
+  (in :defn)
+
+  (table :defn))
 
 ;;; Sexp navigation
 (defun jojo--looking-at-non-logical-sexp ()
