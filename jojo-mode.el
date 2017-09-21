@@ -213,14 +213,14 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
-;;     ;; :local-name.field-name
-;;     ;; :local-name.field-name.field-name
-;;     (,(rx symbol-start
-;;           (group ":" (one-or-more (not (in ". \t"))))
-;;           (group "." (one-or-more (not blank)))
-;;           word-end)
-;;       (1 font-lock-preprocessor-face)
-;;       (2 font-lock-constant-face))
+    ;;     ;; :local-name.field-name
+    ;;     ;; :local-name.field-name.field-name
+    ;;     (,(rx symbol-start
+    ;;           (group ":" (one-or-more (not (in ". \t"))))
+    ;;           (group "." (one-or-more (not blank)))
+    ;;           word-end)
+    ;;       (1 font-lock-preprocessor-face)
+    ;;       (2 font-lock-constant-face))
 
     ;; :local-name
     (,(rx symbol-start
@@ -274,18 +274,13 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
        "\\>")
       0 font-lock-constant-face)
 
-    ;; CONST SOME_CONST (optionally prefixed by /)
-    ("\\(?:\\<\\|/\\)\\([A-Z]+\\|\\([A-Z]+_[A-Z1-9_]+\\)\\)\\>" 1 font-lock-constant-face)
-
     (,(rx (minimal-match
            (seq word-start
                 (group "\""
                        (one-or-more (not (in 34)))
                        "\"")
                 word-end)))
-      (1 font-lock-string-face))
-
-    )
+      (1 font-lock-string-face)))
 
   "Default expressions to highlight in jojo mode.")
 
@@ -638,7 +633,14 @@ work).  To set it from Lisp code, use
   (list :defn)
   (+def :defn)
   (+data :defn)
+
   (+var :defn)
+  (+atom :defn)
+  (set :defn)
+
+  (receive :defn)
+  (send :defn)
+
   (note :defn)
   (test :defn)
   (assert :defn)
@@ -651,17 +653,23 @@ work).  To set it from Lisp code, use
   (+disp :defn)
   (+disp-default :defn)
 
+  (+var :defn)
+
   (forget :defn)
   (let-bind :defn)
 
   (type-sum :defn)
   (type-case :defn)
 
+  (match :defn)
+
+  (module :defn)
   (+module :defn)
   (import :defn)
   (export :defn)
   (use :defn)
   (in :defn)
+  (include :defn)
 
   (table :defn))
 
