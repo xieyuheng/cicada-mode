@@ -213,14 +213,14 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
-    ;;     ;; :local-name.field-name
-    ;;     ;; :local-name.field-name.field-name
-    ;;     (,(rx symbol-start
-    ;;           (group ":" (one-or-more (not (in ". \t"))))
-    ;;           (group "." (one-or-more (not blank)))
-    ;;           word-end)
-    ;;       (1 font-lock-preprocessor-face)
-    ;;       (2 font-lock-constant-face))
+    ;; :local-name.field-name
+    ;; :local-name.field-name.field-name
+    (,(rx symbol-start
+          (group ":" (one-or-more (not (in ". \t"))))
+          (group "." (one-or-more (not blank)))
+          word-end)
+      (1 font-lock-preprocessor-face)
+      (2 font-lock-constant-face))
 
     ;; :local-name
     (,(rx symbol-start
@@ -241,6 +241,9 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
                      "rev"
                      "default"
                      "refl"
+                     "><"
+                     "><><"
+                     "><><><"
                      "times"
                      "end"
                      "bye"
@@ -257,7 +260,7 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
 
     ;; (keyword ...)
     (,(rx "("
-          (group (or "=" "*" ":"
+          (group (or "=" "+" "*" ":"
                      "do" "el" "if" "throw" "try" "catch" "finally"
                      "set!" "new" "."))
           word-end)
@@ -583,6 +586,9 @@ work).  To set it from Lisp code, use
   (if-not 1)
   (case :defn)
   (cond 0)
+  (choice 0)
+  (| 0)
+  (- 0)
   (when 1)
   (while 1)
   (when-not 1)
@@ -626,8 +632,11 @@ work).  To set it from Lisp code, use
   (+type :defn) (type :defn) (+simple-type :defn) (simple-type :defn)
   (+fun :defn) (fun :defn)
   (+jojo :defn) (jojo :defn)
+  (+macro :defn)
+  (+process :defn) (process :defn)
   (+type-alias :defn) (type-alias :defn)
   (+imp :defn) (imp :defn)
+  (+member :defn)
   (+proof :defn) (proof :defn)
   (run :defn)
   (list :defn)
@@ -671,7 +680,10 @@ work).  To set it from Lisp code, use
   (in :defn)
   (include :defn)
 
-  (table :defn))
+  (table :defn)
+
+  (+quotype :defn)
+  (+simple-quotype :defn))
 
 ;;; Sexp navigation
 (defun jojo--looking-at-non-logical-sexp ()
