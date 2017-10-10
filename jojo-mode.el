@@ -185,9 +185,24 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           symbol-end)
       (1 font-lock-constant-face))
 
+    (,(rx symbol-start
+          (group (or
+                  "import"
+                  "as"
+                  "error"))
+          symbol-end)
+      (1 font-lock-keyword-face))
+
     ;; <type>
     (,(rx symbol-start
           (group "<" (one-or-more (not blank)) ">")
+          word-end)
+      (1 font-lock-type-face))
+
+    ;; Class
+    (,(rx symbol-start
+          (group (in (?A . ?Z))
+                 (zero-or-more (not blank)))
           word-end)
       (1 font-lock-type-face))
 
@@ -582,7 +597,7 @@ work).  To set it from Lisp code, use
   (def :defn)
   (defn :defn)
   (begin :defn)
-  (if 0)
+  (if :defn)
   (if-not 1)
   (case :defn)
   (cond 0)
@@ -617,7 +632,7 @@ work).  To set it from Lisp code, use
   (finally 0)
 
   ;; binding forms
-  (let 1)
+  (let :defn)
   (letfn '(1 ((:defn)) nil))
   (binding 1)
   (for 1)
@@ -632,6 +647,21 @@ work).  To set it from Lisp code, use
   (+type :defn) (type :defn) (+simple-type :defn) (simple-type :defn)
   (+fun :defn) (fun :defn)
   (+jojo :defn) (jojo :defn)
+  (+union :defn) (union :defn)
+
+
+  (+method :defn)
+
+  (proc :defn)
+  (diff :defn)
+  (letrec :defn)
+  (call :defn)
+
+  (dict :defn)
+  (vect :defn)
+  (tuple :defn)
+  (set :defn)
+
   (+macro :defn)
   (+process :defn) (process :defn)
   (+type-alias :defn) (type-alias :defn)
@@ -675,6 +705,7 @@ work).  To set it from Lisp code, use
   (module :defn)
   (+module :defn)
   (import :defn)
+  (from :defn)
   (export :defn)
   (use :defn)
   (in :defn)
