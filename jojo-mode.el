@@ -166,23 +166,31 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
       (1 font-lock-keyword-face))
 
     (,(rx symbol-start
-          (group "#")
-          symbol-end)
+          (group "#"
+                 (zero-or-more (not blank))
+                 "!")
+          word-end)
+      (1 font-lock-variable-name-face))
+
+    (,(rx symbol-start
+          (group "#"
+                 (zero-or-more (not blank)))
+          word-end)
       (1 font-lock-constant-face))
 
     (,(rx symbol-start
           (group "@")
-          symbol-end)
+          word-end)
       (1 font-lock-constant-face))
 
     (,(rx symbol-start
           (group "λ")
-          symbol-end)
+          word-end)
       (1 font-lock-constant-face))
 
     (,(rx symbol-start
           (group "%")
-          symbol-end)
+          word-end)
       (1 font-lock-constant-face))
 
     (,(rx symbol-start
@@ -190,7 +198,7 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
                   "import"
                   "as"
                   "error"))
-          symbol-end)
+          word-end)
       (1 font-lock-keyword-face))
 
     ;; <type>
@@ -275,7 +283,7 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
 
     ;; (keyword ...)
     (,(rx "("
-          (group (or "=" "+" "*" ":"
+          (group (or "~" "=" "+" "*" ":"
                      "do" "el" "if" "throw" "try" "catch" "finally"
                      "set!" "new" "."))
           word-end)
@@ -598,11 +606,14 @@ work).  To set it from Lisp code, use
   (defn :defn)
   (begin :defn)
   (if :defn)
+  (when :defn)
   (if-not 1)
   (case :defn)
   (cond 0)
-  (choice 0)
+  (choice :defn)
   (| 0)
+  (^ 0)
+  (|| 0)
   (- 0)
   (when 1)
   (while 1)
@@ -649,10 +660,20 @@ work).  To set it from Lisp code, use
   (+jojo :defn) (jojo :defn)
   (+union :defn) (union :defn)
 
+  (create :defn)
 
-  (+method :defn)
+  (where :defn)
 
-  (proc :defn)
+  (define :defn)
+
+
+  (+method :defn) (method :defn)
+
+  (+process :defn) (process :defn)
+  (+channel :defn) (channel :defn)
+  (+ch :defn) (ch :defn)
+  (+proc :defn) (proc :defn)
+
   (diff :defn)
   (letrec :defn)
   (call :defn)
@@ -663,7 +684,6 @@ work).  To set it from Lisp code, use
   (set :defn)
 
   (+macro :defn)
-  (+process :defn) (process :defn)
   (+type-alias :defn) (type-alias :defn)
   (+imp :defn) (imp :defn)
   (+member :defn)
