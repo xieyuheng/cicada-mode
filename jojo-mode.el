@@ -657,7 +657,6 @@ work).  To set it from Lisp code, use
   (+jojo :defn) (jojo :defn)
   (+union :defn) (union :defn)
 
-<<<<<<< HEAD
   (+generator :defn)
 
   (define :defn)
@@ -670,7 +669,6 @@ work).  To set it from Lisp code, use
   (+ch :defn) (ch :defn)
   (+proc :defn) (proc :defn)
 
-=======
   (create :defn)
 
   (where :defn)
@@ -685,7 +683,6 @@ work).  To set it from Lisp code, use
   (+ch :defn) (ch :defn)
   (+proc :defn) (proc :defn)
 
->>>>>>> bcf7395a0ffa71c76331059e61123f9eaa738bf6
   (diff :defn)
   (letrec :defn)
   (call :defn)
