@@ -661,6 +661,7 @@ work).  To set it from Lisp code, use
 
   (define :defn)
 
+  (primitive :defn)
 
   (+method :defn) (method :defn)
 
@@ -689,6 +690,7 @@ work).  To set it from Lisp code, use
 
   (dict :defn)
   (vect :defn)
+  (stack :defn)
   (tuple :defn)
   (set :defn)
 
