@@ -277,6 +277,11 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
                      "then"
                      "else"
                      "yield"
+
+                     "receive"
+                     "send"
+                     "spawn"
+
                      "emit"
                      "give"
                      "debug"
