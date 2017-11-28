@@ -657,6 +657,8 @@ work).  To set it from Lisp code, use
   (+jojo :defn) (jojo :defn)
   (+union :defn) (union :defn)
 
+  (main-act :defn)
+
   (+generator :defn)
 
   (define :defn)
