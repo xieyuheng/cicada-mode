@@ -681,6 +681,8 @@ work).  To set it from Lisp code, use
 
   (clone :defn)
 
+  (clo :defn)
+
   (where :defn)
 
   (define :defn)
