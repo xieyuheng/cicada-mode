@@ -201,6 +201,12 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-keyword-face))
 
+    ;; +def
+    (,(rx symbol-start
+          (group "+" (one-or-more (not blank)))
+          word-end)
+      (1 font-lock-keyword-face))
+
     ;; <type>
     (,(rx symbol-start
           (group "<" (one-or-more (not blank)) ">")
