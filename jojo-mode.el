@@ -197,7 +197,10 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           (group (or
                   "import"
                   "as"
-                  "error"))
+                  "error"
+                  "match"
+                  "case"
+                  "if"))
           word-end)
       (1 font-lock-keyword-face))
 
@@ -267,6 +270,8 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
     (,(rx symbol-start
           (group (or "--"
                      "->"
+                     "|"
+                     "+"
                      "rev"
                      "default"
                      "refl"
