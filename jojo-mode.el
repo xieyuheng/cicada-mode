@@ -269,6 +269,7 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
 
     (,(rx symbol-start
           (group (or "--"
+                     "=="
                      "->"
                      "|"
                      "+"
@@ -669,6 +670,7 @@ work).  To set it from Lisp code, use
   (+supertype :defn) (supertype :defn)
   (+subtype :defn) (subtype :defn)
   (+type :defn) (type :defn) (+simple-type :defn) (simple-type :defn)
+  (+space :defn)
   (+fun :defn) (fun :defn)
   (+jojo :defn) (jojo :defn)
   (+union :defn) (union :defn)
