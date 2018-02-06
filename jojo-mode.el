@@ -237,6 +237,13 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-variable-name-face))
 
+
+    ;; type-t type-tt type-ttt
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "-" (one-or-more "t"))
+          word-end)
+      (1 font-lock-type-face))
+
     ;; module-name:name
     (,(rx symbol-start
           (group (one-or-more (not (in ": \t")))
