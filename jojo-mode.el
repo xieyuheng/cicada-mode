@@ -290,6 +290,7 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
                      "end"
                      "bye"
                      "recur"
+                     "loop"
                      "true"
                      "false"
                      "none"
@@ -681,6 +682,8 @@ work).  To set it from Lisp code, use
   (+fun :defn) (fun :defn)
   (+jojo :defn) (jojo :defn)
   (+union :defn) (union :defn)
+
+  (loop :defn)
 
   (main-act :defn)
 
