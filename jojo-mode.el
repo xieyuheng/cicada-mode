@@ -101,8 +101,15 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
  ;; note that, if modify one syntax entry twice
  ;; the second will shadow the first
  ;; whitespace characters:
- (   '(0 . 32)    "-"  )
- (      127       "-"  )
+ ;; (   '(0 . 32)    "-"  )
+ ;; (      127       "-"  )
+
+ ( ?\t "    " )
+ ( ?\n ">   " )
+ ( ?\f "    " )
+ ( ?\r "    " )
+ ( ?\s "    " )
+
  (   ?\,        "_p"  )
  (   ?\-        "_p"  )
  (   ?\_        "_p"  )
@@ -111,6 +118,7 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
  (   ?\"        "\"   ")
  (   ?'         "'   ")
  (   ?`         "'   ")
+ (   ?\;        "<   ")
 
  ;; symbol constituent:
  ;; the following functions need this:
@@ -135,15 +143,17 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
   (set-syntax-table jojo-mode-syntax-table)
   (setq-local indent-tabs-mode nil)
   (setq-local paragraph-ignore-fill-prefix t)
+
   (setq-local comment-start ";")
-  (setq-local comment-start-skip ";+ *")
+  (setq-local comment-start-skip ";+[ \t]*")
   (setq-local comment-add 1) ; default to `;;' in comment-region
   (setq-local comment-column 40)
   (setq-local comment-use-syntax t)
+  (setq-local parse-sexp-ignore-comments t)
+
   (setq-local indent-line-function #'jojo-indent-line)
   (setq-local indent-region-function #'jojo-indent-region)
-  (setq-local lisp-indent-function #'jojo-indent-function)
-  (setq-local parse-sexp-ignore-comments t))
+  (setq-local lisp-indent-function #'jojo-indent-function))
 
 ;;;###autoload
 (define-derived-mode jojo-mode
@@ -238,9 +248,15 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
       (1 font-lock-variable-name-face))
 
 
-    ;; type-t type-tt type-ttt
+    ;; type-t[t]*
     (,(rx symbol-start
           (group (one-or-more (not blank)) "-" (one-or-more "t"))
+          word-end)
+      (1 font-lock-type-face))
+
+    ;; union-u[u]*
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "-" (one-or-more "u"))
           word-end)
       (1 font-lock-type-face))
 
