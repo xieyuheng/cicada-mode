@@ -247,19 +247,6 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-variable-name-face))
 
-
-    ;; type-t[t]*
-    (,(rx symbol-start
-          (group (one-or-more (not blank)) "-" (one-or-more "t"))
-          word-end)
-      (1 font-lock-type-face))
-
-    ;; union-u[u]*
-    (,(rx symbol-start
-          (group (one-or-more (not blank)) "-" (one-or-more "u"))
-          word-end)
-      (1 font-lock-type-face))
-
     ;; module-name:name
     (,(rx symbol-start
           (group (one-or-more (not (in ": \t")))
@@ -309,7 +296,6 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
                      "loop"
                      "true"
                      "false"
-                     "none"
                      "then"
                      "else"
                      "yield"
@@ -326,6 +312,36 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
+    ;; type-t[t]*
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "-" (one-or-more "t"))
+          word-end)
+      (1 font-lock-type-face))
+
+    ;; trait-tr
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "-tr")
+          word-end)
+      (1 font-lock-type-face))
+
+    ;; rait-r [hypo element of trait]
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "-r")
+          word-end)
+      (1 font-lock-type-face))
+
+    ;; quotype-q
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "-q")
+          word-end)
+      (1 font-lock-type-face))
+
+    ;; union-u[u]*
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "-" (one-or-more "u"))
+          word-end)
+      (1 font-lock-type-face))
+
     ;; (keyword ...)
     (,(rx "("
           (group (or "~" "=" "+" "*" ":"
@@ -335,8 +351,27 @@ Out-of-the box `jojo-mode' understands lein, boot and gradle."
       (1 font-lock-keyword-face))
 
     ;; Dynamic variables - *something*
-    ("\\(?:\\<\\|/\\)\\(\\*[a-z-]*\\*\\)\\>" 1 font-lock-variable-name-face)
+    ("\\(?:\\<\\|/\\)\\(\\*[a-z-]*\\*\\)\\>"
+     1 font-lock-variable-name-face)
 
+    ;; infix
+    (,(rx symbol-start
+          (group (or ":"
+                     "<"
+                     ">"
+                     "<:"
+                     ":>"
+                     "="
+                     ":="
+                     "=:"))
+          word-end)
+      (1 font-lock-variable-name-face))
+
+    ;; prefix
+    ;; (,(rx symbol-start
+    ;;       (group (or "return"))
+    ;;       word-end)
+    ;;   (1 font-lock-variable-name-face))
 
     (,(rx (minimal-match
            (seq word-start
@@ -793,6 +828,10 @@ work).  To set it from Lisp code, use
   (include :defn)
 
   (table :defn)
+
+
+  (+impl :defn)
+  (+trait :defn)
 
   (+quotype :defn)
   (+simple-quotype :defn))
