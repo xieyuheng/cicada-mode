@@ -342,7 +342,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-variable-name-face))
 
-    ;; quotype-q
+    ;; quotient-q
     (,(rx symbol-start
           (group (one-or-more (not blank)) "-q")
           word-end)
@@ -632,8 +632,12 @@ This function also returns nil meaning don't specify the indentation."
               (cicada--normal-indent last-sexp :always-align))
              ;; This is should be identical to the :defn above.
              ((and function
-                   (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
-                                 function)
+                   (or (string-match "\\`\\(?:\\S +/\\)?\\(def[a-z]*\\|with-\\)"
+                                     function)
+                       (string-match "\\`\\(?:\\S +/\\)?\\(else\\|with-\\)"
+                                     function)
+                       (string-match "\\`\\(?:\\S +/\\)?\\([^[:blank:]]*-t\\|with-\\)"
+                                     function))
                    (not (string-match "\\`default" (match-string 1 function))))
               (+ lisp-body-indent containing-form-column))
              ;; Finally, nothing special here, just respect the user's
@@ -748,6 +752,7 @@ work).  To set it from Lisp code, use
   (+union :defn) (union :defn)
 
   (loop :defn)
+  (main :defn)
 
   (main-act :defn)
 
@@ -846,8 +851,7 @@ work).  To set it from Lisp code, use
   (+impl :defn)
   (+trait :defn)
 
-  (+quotype :defn)
-  (+simple-quotype :defn))
+  (+quotient :defn))
 
 ;;; Sexp navigation
 (defun cicada--looking-at-non-logical-sexp ()
