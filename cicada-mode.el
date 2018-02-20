@@ -225,6 +225,20 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
+    ;; infix
+    (,(rx symbol-start
+          (group (or ":"
+                     "::"
+                     "<"
+                     ">"
+                     "<:"
+                     ":>"
+                     "="
+                     ":="
+                     "=:"))
+          word-end)
+      (1 font-lock-variable-name-face))
+
     ;; Class
     (,(rx symbol-start
           (group (in (?A . ?Z))
@@ -365,20 +379,6 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
     ;; Dynamic variables - *something*
     ("\\(?:\\<\\|/\\)\\(\\*[a-z-]*\\*\\)\\>"
      1 font-lock-variable-name-face)
-
-    ;; infix
-    (,(rx symbol-start
-          (group (or ":"
-                     "::"
-                     "<"
-                     ">"
-                     "<:"
-                     ":>"
-                     "="
-                     ":="
-                     "=:"))
-          word-end)
-      (1 font-lock-variable-name-face))
 
     ;; prefix
     ;; (,(rx symbol-start
