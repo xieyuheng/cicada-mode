@@ -109,6 +109,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
  ( ?\r "    " )
  ( ?\s "    " )
 
+ (   ?\.        "_p"  )
  (   ?\,        "_p"  )
  (   ?\-        "_p"  )
  (   ?\_        "_p"  )
@@ -447,7 +448,7 @@ symbol properties."
                  'cicada-indent-function)
             (get (intern-soft (match-string 1 function-name))
                  'cicada-backtracking-indent)))
-      (when (string-match (rx (or "let" "when" "while") (syntax symbol))
+      (when (string-match (rx (or "let" "unless" "when" "while") (syntax symbol))
                           function-name)
         (cicada--get-indent-method (substring (match-string 0 function-name) 0 -1)))))
 
@@ -637,6 +638,10 @@ This function also returns nil meaning don't specify the indentation."
                        (string-match "\\`\\(?:\\S +/\\)?\\(else\\|with-\\)"
                                      function)
                        (string-match "\\`\\(?:\\S +/\\)?\\([^[:blank:]]*-t\\|with-\\)"
+                                     function)
+                       (string-match "\\`\\(?:\\S +/\\)?\\([^[:blank:]]*-u\\|with-\\)"
+                                     function)
+                       (string-match "\\`\\(?:\\S +/\\)?\\([^[:blank:]]*-c\\|with-\\)"
                                      function))
                    (not (string-match "\\`default" (match-string 1 function))))
               (+ lisp-body-indent containing-form-column))
@@ -697,6 +702,7 @@ work).  To set it from Lisp code, use
   (begin :defn)
   (if :defn)
   (when :defn)
+  (unless :defn)
   (if-not 1)
   (case :defn)
   (cond 0)
@@ -747,9 +753,12 @@ work).  To set it from Lisp code, use
   (+subtype :defn) (subtype :defn)
   (+type :defn) (type :defn) (+simple-type :defn) (simple-type :defn)
   (+space :defn)
-  (+fun :defn) (fun :defn)
+  (+fun :defn)
+  (+jojo :defn) (fun :defn)
   (+cicada :defn) (cicada :defn)
   (+union :defn) (union :defn)
+  (+high :defn)  (+higher :defn)
+  (high :defn)  (higher :defn)
 
   (loop :defn)
   (main :defn)
