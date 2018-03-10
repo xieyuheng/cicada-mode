@@ -203,17 +203,6 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-constant-face))
 
-    (,(rx symbol-start
-          (group (or
-                  "import"
-                  "as"
-                  "error"
-                  "match"
-                  "case"
-                  "if"))
-          word-end)
-      (1 font-lock-keyword-face))
-
     ;; +def
     (,(rx symbol-start
           (group "+" (one-or-more (not blank)))
@@ -299,7 +288,10 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
     (,(rx symbol-start
           (group (or "--"
                      "=="
+                     "=>"
                      "->"
+                     "<="
+                     "<-"
                      "|"
                      "+"
                      "rev"
@@ -369,11 +361,24 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
+    ;; keyword
+    (,(rx symbol-start
+          (group (or
+                  "import"
+                  "as"
+                  "error"
+                  "match"
+                  "case"
+                  "if"))
+          word-end)
+      (1 font-lock-keyword-face))
+
     ;; (keyword ...)
     (,(rx "("
           (group (or "~" "=" "+" "*" ":"
                      "do" "el" "if" "throw" "try" "catch" "finally"
-                     "set!" "new" "."))
+                     "set!" "new" "."
+                     (seq "lit/" (one-or-more (not blank)))))
           word-end)
       (1 font-lock-keyword-face))
 
@@ -707,9 +712,7 @@ work).  To set it from Lisp code, use
   (case :defn)
   (cond 0)
   (choice :defn)
-  (| 0)
   (^ 0)
-  (|| 0)
   (- 0)
   (when 1)
   (while 1)
@@ -754,6 +757,7 @@ work).  To set it from Lisp code, use
   (+type :defn) (type :defn) (+simple-type :defn) (simple-type :defn)
   (+space :defn)
   (+fun :defn)
+  (composition :defn)
   (+jojo :defn) (fun :defn)
   (+cicada :defn) (cicada :defn)
   (+union :defn) (union :defn)
