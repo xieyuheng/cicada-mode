@@ -741,8 +741,11 @@ work).  To set it from Lisp code, use
   (catch 2)
   (finally 0)
 
-  ;; binding forms
+
   (let :defn)
+  (or :defn)
+  (and :defn)
+
   (letfn '(1 ((:defn)) nil))
   (binding 1)
   (for 1)
