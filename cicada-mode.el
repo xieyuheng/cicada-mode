@@ -329,23 +329,25 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
-    ;; class-tc
+    ;; class-tc alias-ta
     (,(rx symbol-start
-          (group (one-or-more (not blank)) "-tc")
+          (group (one-or-more (not blank)) (or "-tc" "-ta"))
           word-end)
       (1 font-lock-type-face))
 
     ;; cons-c create-cr
     (,(rx symbol-start
           (group (one-or-more (not blank))
-                 (or "-c"
+                 (or "-p"
+                     "-c"
                      "-cr"))
           word-end)
       (1 font-lock-variable-name-face))
 
     ;; clone
     (,(rx symbol-start
-          (group "clone")
+          (group (or "clone"
+                     "apply"))
           word-end)
       (1 font-lock-variable-name-face))
 
@@ -711,6 +713,8 @@ work).  To set it from Lisp code, use
   (if-not 1)
   (case :defn)
   (cond 0)
+  (or 0)
+  (and 0)
   (choice :defn)
   (^ 0)
   (- 0)
@@ -743,8 +747,10 @@ work).  To set it from Lisp code, use
 
 
   (let :defn)
-  (or :defn)
-  (and :defn)
+
+  (bool/if :defn)
+  (bool/when :defn)
+  (bool/unless :defn)
 
   (letfn '(1 ((:defn)) nil))
   (binding 1)
@@ -753,6 +759,7 @@ work).  To set it from Lisp code, use
   (dotimes 1)
   (when-let 1)
   (if-let 1)
+
 
   (+class :defn) (class :defn)
   (+supertype :defn) (supertype :defn)
@@ -866,6 +873,9 @@ work).  To set it from Lisp code, use
 
   (+impl :defn)
   (+trait :defn)
+
+  (cicada-language :defn)
+  (cl :defn)
 
   (+quotient :defn))
 
