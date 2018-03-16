@@ -380,7 +380,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           (group (or "~" "=" "+" "*" ":"
                      "do" "el" "if" "throw" "try" "catch" "finally"
                      "set!" "new" "."
-                     (seq "lit/" (one-or-more (not blank)))))
+                     (seq "lit-" (one-or-more (not blank)))))
           word-end)
       (1 font-lock-keyword-face))
 
@@ -748,9 +748,9 @@ work).  To set it from Lisp code, use
 
   (let :defn)
 
-  (bool/if :defn)
-  (bool/when :defn)
-  (bool/unless :defn)
+  (bool-if :defn)
+  (bool-when :defn)
+  (bool-unless :defn)
 
   (letfn '(1 ((:defn)) nil))
   (binding 1)
