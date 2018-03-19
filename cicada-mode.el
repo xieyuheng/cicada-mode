@@ -455,7 +455,7 @@ symbol properties."
                  'cicada-indent-function)
             (get (intern-soft (match-string 1 function-name))
                  'cicada-backtracking-indent)))
-      (when (string-match (rx (or "let" "unless" "when" "while") (syntax symbol))
+      (when (string-match (rx (or "let" "unless" "when-not" "when" "while") (syntax symbol))
                           function-name)
         (cicada--get-indent-method (substring (match-string 0 function-name) 0 -1)))))
 
@@ -750,7 +750,7 @@ work).  To set it from Lisp code, use
 
   (bool-if :defn)
   (bool-when :defn)
-  (bool-unless :defn)
+  (bool-when-not :defn)
 
   (letfn '(1 ((:defn)) nil))
   (binding 1)
