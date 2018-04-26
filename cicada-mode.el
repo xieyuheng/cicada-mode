@@ -218,7 +218,6 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
     ;; infix
     (,(rx symbol-start
           (group (or ":"
-                     "::"
                      "<"
                      ">"
                      "<:"
@@ -228,6 +227,12 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                      "=:"))
           word-end)
       (1 font-lock-variable-name-face))
+
+    ;; infix2
+    (,(rx symbol-start
+          (group (or "::"))
+          word-end)
+      (1 font-lock-constant-face))
 
     ;; Class
     (,(rx symbol-start
@@ -360,6 +365,12 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
     ;; union-u
     (,(rx symbol-start
           (group (one-or-more (not blank)) "-u")
+          word-end)
+      (1 font-lock-type-face))
+
+    ;; relation-o
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "-o")
           word-end)
       (1 font-lock-type-face))
 
@@ -767,10 +778,12 @@ work).  To set it from Lisp code, use
   (+type :defn) (type :defn) (+simple-type :defn) (simple-type :defn)
   (+space :defn)
   (+fun :defn)
+  (+alias :defn)
   (composition :defn)
   (+jojo :defn) (fun :defn)
   (+cicada :defn) (cicada :defn)
   (+union :defn) (union :defn)
+  (+relation :defn) (relation :defn)
   (+high :defn)  (+higher :defn)
   (high :defn)  (higher :defn)
 
@@ -788,6 +801,9 @@ work).  To set it from Lisp code, use
   (+method :defn) (method :defn)
 
   (+process :defn) (process :defn)
+
+  (+theorem :defn) (theorem :defn)
+
   (+channel :defn) (channel :defn)
   (+ch :defn) (ch :defn)
   (+proc :defn) (proc :defn)
