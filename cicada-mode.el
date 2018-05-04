@@ -209,6 +209,13 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-keyword-face))
 
+
+    ;; .:
+    (,(rx symbol-start
+          (group ".:" (one-or-more (not blank)))
+          word-end)
+      (1 font-lock-keyword-face))
+
     ;; <type>
     (,(rx symbol-start
           (group "<" (one-or-more (not blank)) ">")
@@ -802,7 +809,12 @@ work).  To set it from Lisp code, use
 
   (+process :defn) (process :defn)
 
+  (with-local-scope :defn)
+
+  (step :defn)
+
   (+theorem :defn) (theorem :defn)
+  (+axiom :defn) (axiom :defn)
 
   (+channel :defn) (channel :defn)
   (+ch :defn) (ch :defn)
@@ -841,6 +853,7 @@ work).  To set it from Lisp code, use
   (+imp :defn) (imp :defn)
   (+member :defn)
   (+proof :defn) (proof :defn)
+  (+total :defn) (total :defn)
   (run :defn)
   (list :defn)
   (+def :defn)
