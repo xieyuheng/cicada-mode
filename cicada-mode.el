@@ -203,6 +203,11 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-constant-face))
 
+    (,(rx symbol-start
+          (group "%%")
+          word-end)
+      (1 font-lock-constant-face))
+
     ;; +def
     (,(rx symbol-start
           (group "+" (one-or-more (not blank)))
@@ -343,7 +348,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
 
     ;; class-tc alias-ta
     (,(rx symbol-start
-          (group (one-or-more (not blank)) (or "-tc" "-ta"))
+          (group (one-or-more (not blank)) (or "-ct" "-ft" "-tc" "-ta"))
           word-end)
       (1 font-lock-type-face))
 
@@ -740,7 +745,6 @@ work).  To set it from Lisp code, use
   (while 1)
   (when-not 1)
   (when-first 1)
-  (do 0)
   (future 0)
   (comment 0)
   (doto 1)
@@ -778,8 +782,13 @@ work).  To set it from Lisp code, use
   (when-let 1)
   (if-let 1)
 
+  (bind 0)
+  (bind-to 1)
+  (return :defn)
+
 
   (+class :defn) (class :defn)
+  (+cat :defn) (cat :defn)
   (+supertype :defn) (supertype :defn)
   (+subtype :defn) (subtype :defn)
   (+type :defn) (type :defn) (+simple-type :defn) (simple-type :defn)
@@ -808,6 +817,8 @@ work).  To set it from Lisp code, use
   (+method :defn) (method :defn)
 
   (+process :defn) (process :defn)
+
+  (do :defn)
 
   (with-local-scope :defn)
 
@@ -851,9 +862,12 @@ work).  To set it from Lisp code, use
   (+macro :defn)
   (+type-alias :defn) (type-alias :defn)
   (+imp :defn) (imp :defn)
+  (+instance :defn) (instance :defn)
   (+member :defn)
   (+proof :defn) (proof :defn)
   (+total :defn) (total :defn)
+  (+interface :defn) (interface :defn)
+  (+sig :defn) (sig :defn)
   (run :defn)
   (list :defn)
   (+def :defn)
