@@ -259,6 +259,12 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-preprocessor-face))
 
+    ;; fun@
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "@")
+          word-end)
+      (1 font-lock-preprocessor-face))
+
     ;; name!
     (,(rx symbol-start
           (group (one-or-more (not blank)) "!")
@@ -307,6 +313,9 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                      "=="
                      "=>"
                      "->"
+                     "~>"
+                     ">-"
+                     "-<"
                      "<="
                      "<-"
                      "|"
@@ -318,7 +327,6 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                      "><><"
                      "><><><"
                      "times"
-                     "end"
                      "bye"
                      "recur"
                      "loop"
@@ -326,6 +334,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                      "false"
                      "then"
                      "else"
+                     "lazy"
                      "yield"
 
                      "receive"
@@ -342,13 +351,27 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
 
     ;; type-t[t]*
     (,(rx symbol-start
-          (group (one-or-more (not blank)) "-" (one-or-more "t"))
+          (group (one-or-more (not blank)) "-"
+                 (one-or-more "t"))
+          word-end)
+      (1 font-lock-type-face))
+
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "-"
+                 (one-or-more "t") "*")
+          word-end)
+      (1 font-lock-type-face))
+
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "-"
+                 (one-or-more "t")
+                 (one-or-more (in (?0 . ?9))))
           word-end)
       (1 font-lock-type-face))
 
     ;; class-tc alias-ta
     (,(rx symbol-start
-          (group (one-or-more (not blank)) (or "-ct" "-ft" "-tc" "-ta"))
+          (group (one-or-more (not blank)) (or "-s" "-ct" "-ft" "-tc" "-ta"))
           word-end)
       (1 font-lock-type-face))
 
@@ -389,11 +412,20 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
     ;; keyword
     (,(rx symbol-start
           (group (or
+                  "note"
                   "import"
                   "as"
                   "error"
                   "match"
+                  "instance"
+                  "class"
+                  "type"
+                  "lambda"
+                  "λ"
                   "case"
+                  "let"
+                  "open-up"
+                  "in"
                   "if"))
           word-end)
       (1 font-lock-keyword-face))
@@ -818,7 +850,7 @@ work).  To set it from Lisp code, use
 
   (+process :defn) (process :defn)
 
-  (do :defn)
+  (do 0)
 
   (with-local-scope :defn)
 
@@ -862,7 +894,6 @@ work).  To set it from Lisp code, use
   (+macro :defn)
   (+type-alias :defn) (type-alias :defn)
   (+imp :defn) (imp :defn)
-  (+instance :defn) (instance :defn)
   (+member :defn)
   (+proof :defn) (proof :defn)
   (+total :defn) (total :defn)
@@ -872,6 +903,8 @@ work).  To set it from Lisp code, use
   (list :defn)
   (+def :defn)
   (+data :defn)
+
+  (data :defn)
 
   (+var :defn)
   (+atom :defn)
@@ -919,6 +952,8 @@ work).  To set it from Lisp code, use
 
   (cicada-language :defn)
   (cl :defn)
+
+  (field :defn)
 
   (+quotient :defn))
 
