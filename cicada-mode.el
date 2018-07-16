@@ -176,20 +176,25 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
       (1 font-lock-keyword-face))
 
     (,(rx symbol-start
-          (group "#"
+          (group (or "#" "$")
                  (zero-or-more (not blank))
                  "!")
           word-end)
       (1 font-lock-variable-name-face))
 
     (,(rx symbol-start
-          (group "#"
+          (group (or "#" "$")
                  (zero-or-more (not blank)))
           word-end)
       (1 font-lock-constant-face))
 
     (,(rx symbol-start
           (group "@")
+          word-end)
+      (1 font-lock-constant-face))
+
+    (,(rx symbol-start
+          (group "&")
           word-end)
       (1 font-lock-constant-face))
 
@@ -265,6 +270,12 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-preprocessor-face))
 
+    ;; fun&
+    (,(rx symbol-start
+          (group (one-or-more (not blank)) "&")
+          word-end)
+      (1 font-lock-type-face))
+
     ;; name!
     (,(rx symbol-start
           (group (one-or-more (not blank)) "!")
@@ -313,6 +324,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                      "=="
                      "=>"
                      "->"
+                     "*"
                      "~>"
                      ">-"
                      "-<"
@@ -320,7 +332,6 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                      "<-"
                      "|"
                      "+"
-                     "rev"
                      "default"
                      "refl"
                      "><"
@@ -332,8 +343,6 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                      "loop"
                      "true"
                      "false"
-                     "then"
-                     "else"
                      "lazy"
                      "yield"
 
@@ -342,7 +351,6 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                      "spawn"
 
                      "emit"
-                     "give"
                      "debug"
                      "step"
                      "quote"))
@@ -380,6 +388,8 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           (group (one-or-more (not blank))
                  (or "-p"
                      "-c"
+                     "-cc"
+                     "-ccc"
                      "-cr"))
           word-end)
       (1 font-lock-variable-name-face))
@@ -420,15 +430,30 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                   "instance"
                   "class"
                   "type"
+                  "set"
                   "union"
                   "data"
                   "lambda"
+
+                  "unique"
+                  "of"
+                  "under"
+                  "such-that"
+                  "give"
+
+                  "macro"
+
+                  "if"
+                  "then"
+                  "else"
+
                   "λ"
                   "case"
                   "let"
                   "open-up"
                   "in"
-                  "if"))
+                  "with-details"
+                  ))
           word-end)
       (1 font-lock-keyword-face))
 
@@ -830,7 +855,7 @@ work).  To set it from Lisp code, use
   (+fun :defn)
   (+alias :defn)
   (composition :defn)
-  (+jojo :defn) (fun :defn)
+  (+jojo :defn)
   (+cicada :defn) (cicada :defn)
   (+union :defn) (union :defn)
   (+relation :defn) (relation :defn)
