@@ -290,34 +290,35 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
-    ;; name.field
-    (,(rx symbol-start
-          (group (one-or-more (not (in ". \t"))))
-          (group "." (one-or-more (not blank)))
-          word-end)
-      (2 font-lock-constant-face))
+;;     ;; name.field
+;;     (,(rx symbol-start
+;;           (group (one-or-more (not (in ". \t"))))
+;;           (group "." (one-or-more (not blank)))
+;;           word-end)
+;;       (2 font-lock-constant-face))
 
-    ;; :local-name.field-name
-    ;; :local-name.field-name.field-name
-    (,(rx symbol-start
-          (group ":" (one-or-more (not (in ". \t"))))
-          (group "." (one-or-more (not blank)))
-          word-end)
-      (1 font-lock-preprocessor-face)
-      (2 font-lock-constant-face))
+;;     ;; :local-name.field-name
+;;     ;; :local-name.field-name.field-name
+;;     (,(rx symbol-start
+;;           (group ":" (one-or-more (not (in ". \t"))))
+;;           (group "." (one-or-more (not blank)))
+;;           word-end)
+;;       (1 font-lock-preprocessor-face)
+;;       (2 font-lock-constant-face))
+
+;;     ;; .field-name
+;;     ;; .field-name.field-name
+;;     (,(rx symbol-start
+;;           (group "." (one-or-more (not blank)))
+;;           word-end)
+;;       (1 font-lock-constant-face))
+
 
     ;; :local-name
     (,(rx symbol-start
           (group ":" (one-or-more (not (in ". \t"))))
           word-end)
       (1 font-lock-preprocessor-face))
-
-    ;; .field-name
-    ;; .field-name.field-name
-    (,(rx symbol-start
-          (group "." (one-or-more (not blank)))
-          word-end)
-      (1 font-lock-constant-face))
 
     (,(rx symbol-start
           (group (or "--"
@@ -357,40 +358,30 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
-    ;; type-t[t]*
+    ;; type-t
     (,(rx symbol-start
-          (group (one-or-more (not blank)) "-"
-                 (one-or-more "t"))
+          (group (one-or-more (not blank))
+                 (or "-p"
+                     "-t"
+                     "-tt"
+                     "-ttt"
+                     "-tttt"
+                     "-ttttt"
+                     "-tttttt"))
           word-end)
       (1 font-lock-type-face))
 
-    (,(rx symbol-start
-          (group (one-or-more (not blank)) "-"
-                 (one-or-more "t") "*")
-          word-end)
-      (1 font-lock-type-face))
-
-    (,(rx symbol-start
-          (group (one-or-more (not blank)) "-"
-                 (one-or-more "t")
-                 (one-or-more (in (?0 . ?9))))
-          word-end)
-      (1 font-lock-type-face))
-
-    ;; class-tc alias-ta
-    (,(rx symbol-start
-          (group (one-or-more (not blank)) (or "-s" "-ct" "-ft" "-tc" "-ta"))
-          word-end)
-      (1 font-lock-type-face))
-
-    ;; cons-c create-cr
+    ;; cons-c
+    ;; predicate-p
     (,(rx symbol-start
           (group (one-or-more (not blank))
                  (or "-p"
                      "-c"
                      "-cc"
                      "-ccc"
-                     "-cr"))
+                     "-cccc"
+                     "-ccccc"
+                     "-cccccc"))
           word-end)
       (1 font-lock-variable-name-face))
 
