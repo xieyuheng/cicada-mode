@@ -113,12 +113,11 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
  (   ?\,        "_p"  )
  (   ?\-        "_p"  )
  (   ?\_        "_p"  )
- (   ?\/        "_p"  )
 
  (   ?\"        "\"   ")
  (   ?'         "'   ")
  (   ?`         "'   ")
- (   ?\;        "<   ")
+ (   ?\/        "<   ")
 
  ;; symbol constituent:
  ;; the following functions need this:
@@ -144,8 +143,8 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
   (setq-local indent-tabs-mode nil)
   (setq-local paragraph-ignore-fill-prefix t)
 
-  (setq-local comment-start ";")
-  (setq-local comment-start-skip ";+[ \t]*")
+  (setq-local comment-start "/")
+  (setq-local comment-start-skip "/+[ \t]*")
   (setq-local comment-add 1) ; default to `;;' in comment-region
   (setq-local comment-column 40)
   (setq-local comment-use-syntax t)
@@ -213,12 +212,30 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-constant-face))
 
-    ;; +def
+    ;; type-t
     (,(rx symbol-start
-          (group "+" (one-or-more (not blank)))
+          (group (one-or-more (not blank))
+                 (seq "_" (or "t"
+                              "tt"
+                              "ttt"
+                              "tttt"
+                              "ttttt"
+                              "tttttt")))
           word-end)
-      (1 font-lock-keyword-face))
+      (1 font-lock-type-face))
 
+
+    ;; cons-c
+    (,(rx symbol-start
+          (group (one-or-more (not blank))
+                 (seq "_" (or "c"
+                              "cc"
+                              "ccc"
+                              "cccc"
+                              "ccccc"
+                              "cccccc")))
+          word-end)
+      (1 font-lock-variable-name-face))
 
     ;; .:
     (,(rx symbol-start
@@ -250,6 +267,85 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           (group (or "::"))
           word-end)
       (1 font-lock-constant-face))
+
+    ;; keyword
+    (,(rx symbol-start
+          (group (or
+                  "note"
+                  "import"
+                  "as"
+
+                  "error"
+                  "match"
+                  "instance"
+                  "class"
+                  "type"
+                  "set"
+                  "union"
+                  "data"
+                  "lambda"
+
+                  "unique"
+                  "of"
+                  "under"
+                  "such-that"
+                  "give"
+
+                  "macro"
+
+                  "if"
+                  "then"
+                  "else"
+
+                  "λ"
+                  "case"
+                  "do"
+                  "let"
+                  "open-up"
+                  "in"
+                  "with-details"
+                  ))
+          word-end)
+      (1 font-lock-keyword-face))
+
+    ;; type like
+    (,(rx symbol-start
+          (group (or "--"
+                     "=="
+                     "=>"
+                     "->"
+                     "*"
+                     "~>"
+                     ">-"
+                     "-<"
+                     "<="
+                     "<-"
+                     "|"
+                     "+"
+                     "default"
+                     "refl"
+                     "><"
+                     "><><"
+                     "><><><"
+                     "times"
+                     "bye"
+                     "recur"
+                     "loop"
+                     "true"
+                     "false"
+                     "lazy"
+                     "yield"
+
+                     "receive"
+                     "send"
+                     "spawn"
+
+                     "emit"
+                     "debug"
+                     "step"
+                     "quote"))
+          word-end)
+      (1 font-lock-type-face))
 
     ;; Class
     (,(rx symbol-start
@@ -290,182 +386,11 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
-;;     ;; name.field
-;;     (,(rx symbol-start
-;;           (group (one-or-more (not (in ". \t"))))
-;;           (group "." (one-or-more (not blank)))
-;;           word-end)
-;;       (2 font-lock-constant-face))
-
-;;     ;; :local-name.field-name
-;;     ;; :local-name.field-name.field-name
-;;     (,(rx symbol-start
-;;           (group ":" (one-or-more (not (in ". \t"))))
-;;           (group "." (one-or-more (not blank)))
-;;           word-end)
-;;       (1 font-lock-preprocessor-face)
-;;       (2 font-lock-constant-face))
-
-;;     ;; .field-name
-;;     ;; .field-name.field-name
-;;     (,(rx symbol-start
-;;           (group "." (one-or-more (not blank)))
-;;           word-end)
-;;       (1 font-lock-constant-face))
-
-
     ;; :local-name
     (,(rx symbol-start
           (group ":" (one-or-more (not (in ". \t"))))
           word-end)
       (1 font-lock-preprocessor-face))
-
-    (,(rx symbol-start
-          (group (or "--"
-                     "=="
-                     "=>"
-                     "->"
-                     "*"
-                     "~>"
-                     ">-"
-                     "-<"
-                     "<="
-                     "<-"
-                     "|"
-                     "+"
-                     "default"
-                     "refl"
-                     "><"
-                     "><><"
-                     "><><><"
-                     "times"
-                     "bye"
-                     "recur"
-                     "loop"
-                     "true"
-                     "false"
-                     "lazy"
-                     "yield"
-
-                     "receive"
-                     "send"
-                     "spawn"
-
-                     "emit"
-                     "debug"
-                     "step"
-                     "quote"))
-          word-end)
-      (1 font-lock-type-face))
-
-    ;; type-t
-    (,(rx symbol-start
-          (group (one-or-more (not blank))
-                 (or "-p"
-                     "-t"
-                     "-tt"
-                     "-ttt"
-                     "-tttt"
-                     "-ttttt"
-                     "-tttttt"))
-          word-end)
-      (1 font-lock-type-face))
-
-    ;; cons-c
-    ;; predicate-p
-    (,(rx symbol-start
-          (group (one-or-more (not blank))
-                 (or "-p"
-                     "-c"
-                     "-cc"
-                     "-ccc"
-                     "-cccc"
-                     "-ccccc"
-                     "-cccccc"))
-          word-end)
-      (1 font-lock-variable-name-face))
-
-    ;; clone
-    (,(rx symbol-start
-          (group (or "clone"
-                     "apply"))
-          word-end)
-      (1 font-lock-variable-name-face))
-
-    ;; quotient-q
-    (,(rx symbol-start
-          (group (one-or-more (not blank)) "-q")
-          word-end)
-      (1 font-lock-type-face))
-
-    ;; union-u
-    (,(rx symbol-start
-          (group (one-or-more (not blank)) "-u")
-          word-end)
-      (1 font-lock-type-face))
-
-    ;; relation-o
-    (,(rx symbol-start
-          (group (one-or-more (not blank)) "-o")
-          word-end)
-      (1 font-lock-type-face))
-
-    ;; keyword
-    (,(rx symbol-start
-          (group (or
-                  "note"
-                  "import"
-                  "as"
-                  "error"
-                  "match"
-                  "instance"
-                  "class"
-                  "type"
-                  "set"
-                  "union"
-                  "data"
-                  "lambda"
-
-                  "unique"
-                  "of"
-                  "under"
-                  "such-that"
-                  "give"
-
-                  "macro"
-
-                  "if"
-                  "then"
-                  "else"
-
-                  "λ"
-                  "case"
-                  "let"
-                  "open-up"
-                  "in"
-                  "with-details"
-                  ))
-          word-end)
-      (1 font-lock-keyword-face))
-
-    ;; (keyword ...)
-    (,(rx "("
-          (group (or "~" "=" "+" "*" ":"
-                     "do" "el" "if" "throw" "try" "catch" "finally"
-                     "set!" "new" "."
-                     (seq "lit-" (one-or-more (not blank)))))
-          word-end)
-      (1 font-lock-keyword-face))
-
-    ;; Dynamic variables - *something*
-    ("\\(?:\\<\\|/\\)\\(\\*[a-z-]*\\*\\)\\>"
-     1 font-lock-variable-name-face)
-
-    ;; prefix
-    ;; (,(rx symbol-start
-    ;;       (group (or "return"))
-    ;;       word-end)
-    ;;   (1 font-lock-variable-name-face))
 
     (,(rx (minimal-match
            (seq word-start
@@ -484,7 +409,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
   (setq font-lock-defaults
         '(cicada-font-lock-keywords    ; keywords
           nil nil
-          (("+-*/.<>=!?$#%_&:" . "w")) ; syntax alist
+          (("+-*.<>=!?$#%_&:" . "w")) ; syntax alist
           nil
           (font-lock-mark-block-function . mark-defun))))
 
@@ -825,17 +750,12 @@ work).  To set it from Lisp code, use
   (bool-when-not :defn)
 
   (letfn '(1 ((:defn)) nil))
-  (binding 1)
   (for 1)
   (doseq 1)
   (dotimes 1)
   (when-let 1)
   (if-let 1)
-
-  (bind 0)
-  (bind-to 1)
   (return :defn)
-
 
   (+class :defn) (class :defn)
   (+cat :defn) (cat :defn)
@@ -918,7 +838,6 @@ work).  To set it from Lisp code, use
   (+interface :defn) (interface :defn)
   (+sig :defn) (sig :defn)
   (run :defn)
-  (list :defn)
   (+def :defn)
   (+data :defn)
 
