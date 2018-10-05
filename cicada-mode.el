@@ -38,44 +38,25 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
 
 (make-syntaxes
  cicada-mode-syntax-table
- ;; note that, if modify one syntax entry twice
- ;; the second will shadow the first
- ;; whitespace characters:
- ;; (   '(0 . 32)    "-"  )
- ;; (      127       "-"  )
- ( ?\t "    " )
- ( ?\n ">   " )
- ( ?\f "    " )
- ( ?\r "    " )
- ( ?\s "    " )
-
- (   ?\.        "_p"  )
- (   ?\,        "_p"  )
- (   ?\-        "_p"  )
- (   ?\_        "_p"  )
-
- (   ?\"        "\"   ")
- (   ?'         "'   ")
- (   ?`         "'   ")
- (   ?\/        "<   ")
-
- ;; symbol constituent:
- ;; the following functions need this:
- ;; ``forward-word'' and so on ...
- ;; (  '(33 . 47)    "_"  )
- ;; (  '(58 . 64)    "_"  )
- ;; (  '(91 . 96)    "_"  )
- ;; ( '(123 . 126)   "_"  )
- ;; open/close delimiter:
- ;; the following functions need this:
- ;; ``forward-sexp'' ``backward-sexp''
- ;; ``mark-sexp'' and so on ...
- (  ?\(    "("  )
- (  ?\)    ")"  )
- (  ?\[    "("  )
- (  ?\]    ")"  )
- (  ?\{    "("  )
- (  ?\}    ")"  ))
+ (?\t "    ")
+ (?\n ">   ")
+ (?\f "    ")
+ (?\r "    ")
+ (?\s "    ")
+ (?\. "_p")
+ (?\, "_p")
+ (?\- "_p")
+ (?\_ "_p")
+ (?\" "\"   ")
+ (?'  "'   ")
+ (?`  "'   ")
+ (?\/ "<   ")
+ (?\( "(")
+ (?\) ")")
+ (?\[ "(")
+ (?\] ")")
+ (?\{ "(")
+ (?\} ")"))
 
 (defun cicada-mode-variables ()
   "Set up initial buffer-local variables for cicada mode."
@@ -99,7 +80,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
 (defvar cicada-font-lock-keywords
   `(
     ;; 0123456789
-    (,(rx (seq symbol-start
+    (,(rx (seq word-start
                (group (one-or-more (in (?0 . ?9))))
                word-end))
       (1 font-lock-constant-face))
@@ -107,46 +88,46 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
     (,(rx (group ","))
       (1 font-lock-keyword-face))
 
-    (,(rx symbol-start
+    (,(rx word-start
           (group (or "#" "$")
                  (zero-or-more (not blank))
                  "!")
           word-end)
       (1 font-lock-variable-name-face))
 
-    (,(rx symbol-start
+    (,(rx word-start
           (group (or "#" "$")
                  (zero-or-more (not blank)))
           word-end)
       (1 font-lock-constant-face))
 
-    (,(rx symbol-start
+    (,(rx word-start
           (group "@")
           word-end)
       (1 font-lock-constant-face))
 
-    (,(rx symbol-start
+    (,(rx word-start
           (group "&")
           word-end)
       (1 font-lock-constant-face))
 
-    (,(rx symbol-start
+    (,(rx word-start
           (group "λ")
           word-end)
       (1 font-lock-constant-face))
 
-    (,(rx symbol-start
+    (,(rx word-start
           (group "%")
           word-end)
       (1 font-lock-constant-face))
 
-    (,(rx symbol-start
+    (,(rx word-start
           (group "%%")
           word-end)
       (1 font-lock-constant-face))
 
     ;; type-t
-    (,(rx symbol-start
+    (,(rx word-start
           (group (one-or-more (not blank))
                  (seq "-" (or "t"
                               "tt"
@@ -157,9 +138,8 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
-
     ;; cons-c
-    (,(rx symbol-start
+    (,(rx word-start
           (group (one-or-more (not blank))
                  (seq "-" (or "c"
                               "cc"
@@ -171,19 +151,19 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
       (1 font-lock-variable-name-face))
 
     ;; .:
-    (,(rx symbol-start
+    (,(rx word-start
           (group ".:" (one-or-more (not blank)))
           word-end)
       (1 font-lock-keyword-face))
 
     ;; <type>
-    (,(rx symbol-start
+    (,(rx word-start
           (group "<" (one-or-more (not blank)) ">")
           word-end)
       (1 font-lock-type-face))
 
     ;; infix
-    (,(rx symbol-start
+    (,(rx word-start
           (group (or ":"
                      "<"
                      ">"
@@ -196,13 +176,13 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
       (1 font-lock-variable-name-face))
 
     ;; infix2
-    (,(rx symbol-start
+    (,(rx word-start
           (group (or "::"))
           word-end)
       (1 font-lock-constant-face))
 
     ;; keyword
-    (,(rx symbol-start
+    (,(rx word-start
           (group (or
                   "note"
                   "import"
@@ -215,6 +195,11 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                   "type"
                   "set"
                   "union"
+                  "lit"
+                  "literal"
+                  "tuple"
+                  "enum"
+                  "inherit"
                   "data"
                   "lambda"
 
@@ -225,6 +210,8 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                   "give"
 
                   "macro"
+
+                  "*"
 
                   "if"
                   "then"
@@ -242,12 +229,11 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
       (1 font-lock-keyword-face))
 
     ;; type like
-    (,(rx symbol-start
+    (,(rx word-start
           (group (or "--"
                      "=="
                      "=>"
                      "->"
-                     "*"
                      "~>"
                      ">-"
                      "-<"
@@ -281,38 +267,38 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
       (1 font-lock-type-face))
 
     ;; Class
-    (,(rx symbol-start
+    (,(rx word-start
           (group (in (?A . ?Z))
                  (zero-or-more (not blank)))
           word-end)
       (1 font-lock-type-face))
 
     ;; @fun
-    (,(rx symbol-start
+    (,(rx word-start
           (group "@" (one-or-more (not blank)))
           word-end)
       (1 font-lock-preprocessor-face))
 
     ;; fun@
-    (,(rx symbol-start
+    (,(rx word-start
           (group (one-or-more (not blank)) "@")
           word-end)
       (1 font-lock-preprocessor-face))
 
     ;; fun&
-    (,(rx symbol-start
+    (,(rx word-start
           (group (one-or-more (not blank)) "&")
           word-end)
       (1 font-lock-type-face))
 
     ;; name!
-    (,(rx symbol-start
+    (,(rx word-start
           (group (one-or-more (not blank)) "!")
           word-end)
       (1 font-lock-variable-name-face))
 
     ;; module-name:name
-    (,(rx symbol-start
+    (,(rx word-start
           (group (one-or-more (not (in ": \t")))
                  ":")
           (group (one-or-more (not blank)))
@@ -320,7 +306,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
       (1 font-lock-type-face))
 
     ;; :local-name
-    (,(rx symbol-start
+    (,(rx word-start
           (group ":" (one-or-more (not (in ". \t"))))
           word-end)
       (1 font-lock-preprocessor-face))
