@@ -150,6 +150,13 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-variable-name-face))
 
+
+    ;; set-s
+    (,(rx word-start
+          (group (one-or-more (not blank)) "-s")
+          word-end)
+      (1 font-lock-variable-name-face))
+
     ;; .:
     (,(rx word-start
           (group ".:" (one-or-more (not blank)))
@@ -195,10 +202,15 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                   "type"
                   "set"
                   "union"
+                  "ref"
+                  "join"
+                  "disj"
+                  "conj"
                   "lit"
                   "literal"
                   "tuple"
                   "enum"
+                  "heri"
                   "inherit"
                   "data"
                   "lambda"
