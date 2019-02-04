@@ -148,7 +148,8 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                               "ccccc"
                               "cccccc")))
           word-end)
-      (1 font-lock-variable-name-face))
+      ;; (1 font-lock-variable-name-face)
+      (1 font-lock-constant-face))
 
 
     ;; set-s
@@ -275,13 +276,6 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                      "debug"
                      "step"
                      "quote"))
-          word-end)
-      (1 font-lock-type-face))
-
-    ;; Class
-    (,(rx word-start
-          (group (in (?A . ?Z))
-                 (zero-or-more (not blank)))
           word-end)
       (1 font-lock-type-face))
 
