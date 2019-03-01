@@ -148,7 +148,8 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                               "ccccc"
                               "cccccc")))
           word-end)
-      (1 font-lock-variable-name-face))
+      ;; (1 font-lock-variable-name-face)
+      (1 font-lock-constant-face))
 
 
     ;; set-s
