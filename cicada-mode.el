@@ -129,24 +129,26 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
     ;; type-t
     (,(rx word-start
           (group (one-or-more (not blank))
-                 (seq "-" (or "t"
-                              "tt"
-                              "ttt"
-                              "tttt"
-                              "ttttt"
-                              "tttttt")))
+                 (seq (or "_" "-")
+                      (or "t"
+                          "tt"
+                          "ttt"
+                          "tttt"
+                          "ttttt"
+                          "tttttt")))
           word-end)
       (1 font-lock-type-face))
 
     ;; cons-c
     (,(rx word-start
           (group (one-or-more (not blank))
-                 (seq "-" (or "c"
-                              "cc"
-                              "ccc"
-                              "cccc"
-                              "ccccc"
-                              "cccccc")))
+                 (seq (or "_" "-")
+                      (or "c"
+                          "cc"
+                          "ccc"
+                          "cccc"
+                          "ccccc"
+                          "cccccc")))
           word-end)
       ;; (1 font-lock-variable-name-face)
       (1 font-lock-constant-face))
@@ -154,7 +156,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
 
     ;; set-s
     (,(rx word-start
-          (group (one-or-more (not blank)) "-s")
+          (group (one-or-more (not blank)) (or "_s" "-s"))
           word-end)
       (1 font-lock-variable-name-face))
 
@@ -202,6 +204,7 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                   "class"
                   "type"
                   "heir"
+                  "extends"
                   "set"
                   "union"
                   "ref"
