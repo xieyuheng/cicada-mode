@@ -279,13 +279,6 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
           word-end)
       (1 font-lock-type-face))
 
-    ;; Class
-    (,(rx word-start
-          (group (in (?A . ?Z))
-                 (zero-or-more (not blank)))
-          word-end)
-      (1 font-lock-type-face))
-
     ;; @fun
     (,(rx word-start
           (group "@" (one-or-more (not blank)))
