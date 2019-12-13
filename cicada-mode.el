@@ -225,6 +225,9 @@ Out-of-the box `cicada-mode' understands lein, boot and gradle."
                   "under"
                   "such-that"
                   "give"
+                  "define"
+                  "function"
+                  "object"
 
                   "macro"
 
